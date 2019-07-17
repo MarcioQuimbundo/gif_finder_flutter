@@ -37,9 +37,11 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: Image.network(
-            "https://developers.giphy.com/static/img/dev-logo-lg.7404c00322a8.gif"),
+        backgroundColor: Colors.amber,
+        title: Text(
+          "Digital Gifs",
+          style: TextStyle(color: Colors.black, fontSize: 30),
+        ),
         centerTitle: true,
       ),
       backgroundColor: Colors.black,
@@ -48,6 +50,11 @@ class _HomePageState extends State<HomePage> {
           Padding(
             padding: EdgeInsets.all(10),
             child: TextField(
+              onSubmitted: (text) {
+                setState(() {
+                  _search = text;
+                });
+              },
               decoration: InputDecoration(
                   labelText: "Pesquise Aqui",
                   labelStyle: TextStyle(color: Colors.white),
@@ -74,12 +81,11 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                     );
-                    break;
                   default:
                     if (snapshot.hasError)
                       return Container();
                     else
-                      _createGifTable(context, snapshot);
+                      return _createGifTable(context, snapshot);
                 }
               },
             ),
@@ -90,6 +96,20 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _createGifTable(BuildContext context, AsyncSnapshot snapshot) {
-    
+    return GridView.builder(
+      padding: EdgeInsets.all(10.0),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2, crossAxisSpacing: 10.0, mainAxisSpacing: 10.0),
+      itemCount: snapshot.data["data"].length,
+      itemBuilder: (context, index) {
+        return GestureDetector(
+          child: Image.network(
+            snapshot.data["data"][index]["images"]["fixed_height"]["url"],
+            height: 300.0,
+            fit: BoxFit.cover,
+          ),
+        );
+      },
+    );
   }
 }
